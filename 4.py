@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 
-
 numbers = []
 boards = []
-
 
 def load_data(numbers, boards):
     board = []
