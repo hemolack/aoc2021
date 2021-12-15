@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from math import ceil
+
 polymer = ''
 rules = {}
 pairs = {}
@@ -26,49 +28,19 @@ for i in range(len(polymer)):
     else:
         counts[polymer[i]] = 1
 
-for step in range(10):
-    print('step', step, counts)
+for step in range(40):
     newpairs = {}
-    for pair in pairs.keys():
-        newpairs[pair] = pairs[pair]
-        for _ in range(pairs[pair]):
-            new_pair_1 = pair[0] + rules[pair]
-            new_pair_2 = rules[pair] + pair[1]
-            newpairs[pair] -= 1
-            if new_pair_1 in newpairs.keys():
-                newpairs[new_pair_1] += 1
-            else:
-                newpairs[new_pair_1] = 1
-            if new_pair_2 in newpairs.keys():
-                newpairs[new_pair_2] += 1
-            else:
-                newpairs[new_pair_2] = 1
-            if rules[pair] in counts.keys():
-                counts[rules[pair]] += 1
-            else:
-                counts[rules[pair]] = 1
+    for pair, value in pairs.items():
+        new_pair_1 = pair[0] + rules[pair]
+        new_pair_2 = rules[pair] + pair[1]
+        newpairs[new_pair_1] = newpairs.setdefault(new_pair_1, 0) + value
+        newpairs[new_pair_2] = newpairs.setdefault(new_pair_2, 0) + value
     pairs = newpairs
 
-print(counts)
-answer = max(counts.values()) - min(counts.values())
+counts = {}
+for pair, value in pairs.items():
+    counts[pair[0]] = counts.setdefault(pair[0], 0) + value
+    counts[pair[1]] = counts.setdefault(pair[1], 0) + value
+counts = sorted([ceil(val / 2) for val in counts.values()])
+answer = max(counts) - min(counts)
 print(answer)
-
-# for step in range(10):
-#     print('Step', step)
-#     replacements = []
-#     for i in range(len(polymer) - 1):
-#         pair = polymer[i : (i + 2)]
-#         if i == 0:
-#             replacements.append(f'{pair[0]}{rules[pair]}{pair[1]}')
-#         else:
-#             replacements.append(f'{rules[pair]}{pair[1]}')
-#     polymer = ''.join(replacements)
-
-# elements = list(set(polymer))
-# counts = {}
-# for e in elements:
-#     counts[e] = polymer.count(e)
-
-# print(counts)
-# answer = max(counts.values()) - min(counts.values())
-# print(answer)
