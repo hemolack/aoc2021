@@ -17,36 +17,26 @@ def find_node(label, tree):
 
 def build_graph(rules):
     graph = nx.Graph()
-    nodes = []
     for rule in rules:
         part = rule.split('-')
-        # if p not in nodes:
-        #     nodes[p] = p
-        #     graph.add_node(p)
         graph.add_edge(part[0], part[1])
-    # for rule in rules:
-    #     part = rule.split('-')
-    #     nodes[part[1]].parent = nodes[part[0]]
     return graph
 
 def step_path(graph, node, end, path):
     paths = []
     for n in graph.neighbors(node):
         if n == end:
-            paths.append(path + ',' + node)
+            paths.append(path + ',' + n)
             return
-        else:
+        elif path.find(f'{node},{n}') < 0:
             return node + ',' + step_path(graph, n, end, path)
 
 def find_paths(graph, start, end):
     pathList = []
     path = start + ','
     for n in graph.neighbors(start):
-        if n == end:
-            path += n
-            return path
-        else:
-            path += n + ','
+        pathList.append(step_path(graph, n, end, path))
+    return pathList
 
 rules = load_data()
 graph = build_graph(rules)
@@ -54,5 +44,6 @@ print(list(graph.nodes))
 start = [n for n in graph.nodes if n == 'start'][0]
 end = [n for n in graph.nodes if n == 'end'][0]
 all_paths = find_paths(graph, 'start', 'end')
-for p in all_paths:
-    print(p)
+print(all_paths)
+# for p in all_paths:
+#     print(p)
